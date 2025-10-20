@@ -19,4 +19,12 @@ classifiers = [
 requires-python = ">=3.8"
 
 [project.urls]
-Homepage = "https://github.com/your-username/env-banner"
+Homepage = "https://github.com/sagearbor/env-banner-python"
+Repository = "https://github.com/sagearbor/env-banner-python"
+Issues = "https://github.com/sagearbor/env-banner-python/issues"
+
+[tool.setuptools]
+packages = ["envbanner"]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["test/*", "test/**/*"]

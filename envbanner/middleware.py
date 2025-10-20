@@ -1,6 +1,7 @@
 # envbanner/middleware.py
 import re
 import os
+from typing import Optional, Dict, Any
 from .core import classify_env, build_banner_html, is_prod
 
 def _inject_before(html: str, snippet: str, needle: str) -> str:
@@ -25,9 +26,25 @@ def _charset_from_content_type(ct: bytes) -> str:
     return m.group(1).decode("ascii", "ignore") if m else "utf-8"
 
 class WSGIBannerMiddleware:
-    def __init__(self, app, env_var_name: str = "APP_ENV"):
+    def __init__(self, app, env_var_name: str = "APP_ENV", **options):
+        """
+        WSGI middleware to inject environment banner.
+
+        Args:
+            app: WSGI application
+            env_var_name: Primary environment variable to check (default: "APP_ENV")
+            **options: Additional banner options:
+                - text: Custom banner text
+                - background: Custom background color (hex)
+                - color: Custom text color (hex)
+                - position: Banner position ('top', 'bottom', 'top-left', 'top-right',
+                           'bottom-left', 'bottom-right', 'diagonal', 'diagonal-tlbr', 'diagonal-bltr')
+                - show_host: Whether to show hostname (default: True)
+                - opacity: Banner opacity 0.0-1.0
+        """
         self.app = app
         self.env_var_name = env_var_name
+        self.options = options
 
     def __call__(self, environ, start_response):
         # Buffer response to inject HTML
@@ -58,26 +75,44 @@ class WSGIBannerMiddleware:
             start_response(status, headers)
             return [body]
 
-        snippet = build_banner_html(env, host)
+        # Build banner options
+        banner_options = {**self.options, "env": env, "host": host}
+        snippet = build_banner_html(banner_options)
         charset = _charset_from_content_type(ct)
         html = body.decode(charset, errors="replace")
         html_out = _inject_before(html, snippet, "</body>") or (html + snippet)
         body_out = html_out.encode(charset, errors="replace")
-        
+
         headers = _set_or_replace_header(headers, b"Content-Length", str(len(body_out)).encode())
         start_response(status, headers)
         return [body_out]
 
 class ASGIBannerMiddleware:
-    def __init__(self, app, env_var_name: str = "APP_ENV"):
+    def __init__(self, app, env_var_name: str = "APP_ENV", **options):
+        """
+        ASGI middleware to inject environment banner.
+
+        Args:
+            app: ASGI application
+            env_var_name: Primary environment variable to check (default: "APP_ENV")
+            **options: Additional banner options:
+                - text: Custom banner text
+                - background: Custom background color (hex)
+                - color: Custom text color (hex)
+                - position: Banner position ('top', 'bottom', 'top-left', 'top-right',
+                           'bottom-left', 'bottom-right', 'diagonal', 'diagonal-tlbr', 'diagonal-bltr')
+                - show_host: Whether to show hostname (default: True)
+                - opacity: Banner opacity 0.0-1.0
+        """
         self.app = app
         self.env_var_name = env_var_name
+        self.options = options
 
     async def __call__(self, scope, receive, send):
         if scope["type"] != "http":
             await self.app(scope, receive, send)
             return
-        
+
         response_started = False
         response_body = b""
         original_send = send
@@ -116,7 +151,9 @@ class ASGIBannerMiddleware:
             await send({"type": "http.response.body", "body": body})
             return
 
-        snippet = build_banner_html(env, host)
+        # Build banner options
+        banner_options = {**self.options, "env": env, "host": host}
+        snippet = build_banner_html(banner_options)
         charset = _charset_from_content_type(ct)
         html = body.decode(charset, "replace")
         html_out = _inject_before(html, snippet, "</body>") or (html + snippet)

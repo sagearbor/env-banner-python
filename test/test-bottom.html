@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bottom Bar Banner Test</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 20px 60px;
+    }
+    h1 { color: #1e40af; }
+    .test-section {
+      background: #f3f4f6;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    code {
+      background: #e5e7eb;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bottom Bar Banner Test (DEFAULT)</h1>
+
+  <div class="test-section">
+    <h2>Configuration</h2>
+    <p><code>position: 'bottom'</code> (or no position specified)</p>
+    <p>The banner should appear as a full-width bar at the bottom of the viewport.</p>
+    <p><strong>This is the DEFAULT position.</strong></p>
+  </div>
+
+  <div class="test-section">
+    <h3>What to Look For:</h3>
+    <ul>
+      <li><strong>Position:</strong> Banner is fixed to the bottom of the viewport</li>
+      <li><strong>Width:</strong> Banner spans the full width</li>
+      <li><strong>Height:</strong> 32px tall</li>
+      <li><strong>Body padding:</strong> Page content is pushed up to avoid overlap</li>
+    </ul>
+  </div>
+
+  <style>
+    #env-banner-bar {
+        position: fixed; left: 0; right: 0; height: 32px;
+        display: flex; align-items: center; justify-content: center;
+        font-family: system-ui, sans-serif; font-size: 12px; font-weight: 700;
+        z-index: 2147483647; background: #ef4444; color: #ffffff;
+        text-transform: uppercase; box-shadow: 0 1px 3px rgba(0,0,0,.2);
+        opacity: 1.0;
+    }
+    #env-banner-bar { bottom: 0; top: auto; } body { padding-bottom: 32px !important; }
+  </style>
+  <div id="env-banner-bar" role="status">DEV • localhost</div>
+</body>
+</html>

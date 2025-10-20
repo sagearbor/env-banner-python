@@ -1,11 +1,26 @@
 # envbanner/streamlit_adapter.py
 import os
+from html import escape
+from typing import Dict, Any
 from .core import classify_env, banner_palette, banner_label, is_prod
 
-def streamlit(env_var_name: str = "APP_ENV"):
+def streamlit(env_var_name: str = "APP_ENV", **options):
     """
     Renders a Streamlit-safe banner using st.markdown (HTML+CSS only).
     Place this call near the top of your Streamlit script.
+
+    Args:
+        env_var_name: Primary environment variable to check (default: "APP_ENV")
+        **options: Additional banner options:
+            - text: Custom banner text
+            - background: Custom background color (hex)
+            - color: Custom text color (hex)
+            - position: Banner position ('top' or 'bottom' - default: 'bottom')
+            - show_host: Whether to show hostname (default: True, though host is not available in Streamlit)
+            - opacity: Banner opacity 0.0-1.0
+
+    Note: Due to Streamlit's architecture, only 'top' and 'bottom' positions are supported.
+          Diagonal and corner positions are not available for Streamlit.
     """
     try:
         import streamlit as st
@@ -21,8 +36,24 @@ def streamlit(env_var_name: str = "APP_ENV"):
     if is_prod(env):
         return
 
-    bg, fg = banner_palette(env)
-    label = banner_label(env)
+    # Determine text and colors: use custom options first, then fall back to defaults
+    default_bg, default_fg = banner_palette(env)
+    bg = options.get("background", default_bg)
+    fg = options.get("color", default_fg)
+    label = options.get("text", banner_label(env))
+    position = options.get("position", "bottom")
+    opacity = options.get("opacity", 1.0)
+
+    # Streamlit doesn't have easy host access, so we omit the hostname
+    text = escape(label)
+
+    # Determine position styling
+    if position == "top":
+        pos_style = "top: 0;"
+        padding_style = ".main .block-container { padding-top: 5rem; }"
+    else:  # bottom (default)
+        pos_style = "bottom: 0;"
+        padding_style = ".main .block-container { padding-bottom: 5rem; }"
 
     # Note: Streamlit injects its own CSS which can be complex.
     # Using `position: fixed` is more reliable than `sticky` here.
@@ -30,7 +61,7 @@ def streamlit(env_var_name: str = "APP_ENV"):
         f"""
 <div style="
   position: fixed;
-  top: 0;
+  {pos_style}
   left: 0;
   right: 0;
   height: 32px;
@@ -42,16 +73,15 @@ def streamlit(env_var_name: str = "APP_ENV"):
   text-transform: uppercase;
   background: {bg};
   color: {fg};
+  opacity: {opacity};
   z-index: 999999;
   border-bottom: 1px solid rgba(0,0,0,.2);
 ">
-  {label}
+  {text}
 </div>
 <style>
-  /* Push down the main Streamlit content area */
-  .main .block-container {{
-    padding-top: 5rem;
-  }}
+  /* Push down/up the main Streamlit content area */
+  {padding_style}
 </style>
 """,
         unsafe_allow_html=True,

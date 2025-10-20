@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bottom-Left Corner Ribbon Test</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    h1 { color: #1e40af; }
+    .test-section {
+      background: #f3f4f6;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    code {
+      background: #e5e7eb;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bottom-Left Corner Ribbon Test</h1>
+
+  <div class="test-section">
+    <h2>Configuration</h2>
+    <p><code>position: 'bottom-left'</code></p>
+    <p>The banner should appear as a diagonal ribbon in the bottom-left corner.</p>
+  </div>
+
+  <div class="test-section">
+    <h3>What to Look For:</h3>
+    <ul>
+      <li><strong>Position:</strong> Diagonal ribbon in bottom-left corner</li>
+      <li><strong>Rotation:</strong> Rotated 45deg (from top-left to bottom-right within the corner)</li>
+      <li><strong>Visibility:</strong> Partially visible, extending beyond corner</li>
+    </ul>
+  </div>
+
+  <div id="env-banner-bar">
+    <style>
+      #env-banner-bar {
+          position: fixed; bottom: 0; left: 0;
+          width: 200px; height: 50px;
+          overflow: hidden;
+          z-index: 2147483647;
+      }
+      #env-banner-bar-ribbon {
+          position: absolute; bottom: 15px; left: -50px;
+          padding: 4px 0;
+          width: 200px;
+          transform: rotate(45deg);
+          box-shadow: 0 1px 3px rgba(0,0,0,.2);
+          display: flex; align-items: center; justify-content: center;
+          font-family: system-ui, sans-serif; font-size: 12px; font-weight: 700;
+          background: #ef4444; color: #ffffff; text-transform: uppercase;
+          opacity: 1.0;
+      }
+    </style>
+    <div id="env-banner-bar-ribbon" role="status">DEV • localhost</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagonal Banner Test (TLBR)</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    h1 { color: #1e40af; }
+    .test-section {
+      background: #f3f4f6;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    code {
+      background: #e5e7eb;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Diagonal Banner Test - Top-Left to Bottom-Right (\)</h1>
+
+  <div class="test-section">
+    <h2>Configuration</h2>
+    <p><code>position: 'diagonal-tlbr'</code></p>
+    <p>A thin diagonal stripe going from top-left to bottom-right across the entire viewport.</p>
+  </div>
+
+  <div class="test-section">
+    <h3>What to Look For:</h3>
+    <ul>
+      <li><strong>Direction:</strong> Top-left to bottom-right (\) using <code>rotate(45deg)</code></li>
+      <li><strong>Width:</strong> Spans full diagonal from corner to corner</li>
+      <li><strong>Height:</strong> 80px thin stripe</li>
+      <li><strong>Opacity:</strong> Default 0.5 (semi-transparent)</li>
+      <li><strong>Click-through:</strong> Has <code>pointer-events: none</code> so you can interact with content beneath</li>
+    </ul>
+  </div>
+
+  <div class="test-section">
+    <h3>Technical Details:</h3>
+    <p>The banner uses:</p>
+    <ul>
+      <li><code>position: fixed; top: 50%; left: 50%;</code></li>
+      <li><code>transform: translate(-50%, -50%) rotate(45deg)</code></li>
+      <li><code>width: 200vmax</code> - ensures coverage from corner to corner</li>
+      <li><code>height: 80px</code> - thin stripe visible at any angle</li>
+    </ul>
+  </div>
+
+  <style>
+    #env-banner-bar {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 200vmax;
+        height: 80px;
+        transform: translate(-50%, -50%) rotate(45deg);
+        opacity: 0.5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: system-ui, sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        z-index: 2147483647;
+        background: #ef4444;
+        color: #ffffff;
+        text-transform: uppercase;
+        box-shadow: 0 2px 4px rgba(0,0,0,.3);
+        pointer-events: none;
+    }
+  </style>
+  <div id="env-banner-bar" role="status">DEV • localhost</div>
+</body>
+</html>
