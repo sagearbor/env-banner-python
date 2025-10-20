@@ -15,11 +15,7 @@ envbanner_flask(app, position='bottom', text="DON'T USE REAL DATA - Dev Environm
 ### Node.js (Express)
 ```javascript
 const envBanner = require('env-banner-node');
-app.use(envBanner({
-  position: 'bottom',
-  text: "DON'T USE REAL DATA - Dev Environment",
-  showHost: false
-}));
+app.use(envBanner({position: 'bottom', text: "DON'T USE REAL DATA - Dev Environment", showHost: false}));
 ```
 
 **Default:** Bottom banner, auto-detects environment, shows hostname.
